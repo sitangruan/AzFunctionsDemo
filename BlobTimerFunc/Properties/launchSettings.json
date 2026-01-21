@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BlobTimerFunc": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7110 --skipApiVersionCheck"
+    }
+  }
+}
