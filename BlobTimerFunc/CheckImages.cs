@@ -1,54 +1,46 @@
-﻿using Azure.Storage.Blobs;
+﻿using BlobTimerFunc.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace BlobTimerFunc;
 
 public class CheckImages
 {
-    private readonly ILogger _logger;
-    private readonly string _connectionString;
+    private readonly IBlobLister _blobLister;
+    private readonly ILogger<CheckImages> _logger;
     private readonly string _containerName;
 
-    public CheckImages(ILoggerFactory loggerFactory, IConfiguration config)
+    public CheckImages(IBlobLister blobLister, ILogger<CheckImages> logger, IConfiguration config)
     {
-        _logger = loggerFactory.CreateLogger<CheckImages>();
-        _connectionString = config["BlobConnectionString"] ?? "UseDevelopmentStorage=true";
+        _blobLister = blobLister;
+        _logger = logger;
         _containerName = config["BlobContainerName"] ?? "images";
     }
 
     [Function("CheckBlobTimer")]
-    public async Task Run([TimerTrigger("%TimerSchedule%")] TimerInfo myTimer)
+    public async Task Run([TimerTrigger("%TimerSchedule%")] TimerInfo myTimer, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Check start time: {DateTime.Now}");
+        _logger.LogInformation("Check start time (UTC): {StartTime}", DateTimeOffset.UtcNow);
 
         try
         {
-            BlobServiceClient blobServiceClient = new BlobServiceClient(_connectionString);
-            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+            // Example: no limit, read full count
+            var (count, isTruncated, continuationToken) = await _blobLister.CountBlobsAsync(_containerName, cancellationToken: cancellationToken).ConfigureAwait(false);
+            _logger.LogInformation("Found {Count} blobs in container '{ContainerName}'. Truncated={IsTruncated}", count, _containerName, isTruncated);
 
-            // Check if the container exists
-            if (await containerClient.ExistsAsync())
-            {
-                var blobs = containerClient.GetBlobsAsync();
-                int count = 0;
-                await foreach (var blob in blobs)
-                {
-                    count++;
-                }
-
-                _logger.LogInformation($"Hello! The container \"{_containerName}\" {count} files.");
-            }
-            else
-            {
-                _logger.LogWarning("The container does not exist.");
-            }
+            // If you want to use paging/limits, you can pass maxItems and continuationToken saved from prior runs:
+            // var (countPart, truncated, nextToken) = await _blobLister.CountBlobsAsync(_containerName, maxItems:100000, pageSize:500, continuationToken: savedToken, cancellationToken: cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Function cancelled during blob count.");
+            throw;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error: {ex.Message}");
+            _logger.LogError(ex, "Unexpected error while counting blobs in '{ContainerName}'.", _containerName);
+            throw;
         }
     }
 }

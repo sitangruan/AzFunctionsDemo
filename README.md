@@ -35,7 +35,7 @@ For a `BlobTimerFunc` to work, you provide a schedule in the form of a [cron exp
 ## Running the project
 1. Clone the repository to your local machine.
 2. Open the solution in Visual Studio 2026.
-3. Ensure you have Azurite running for local storage emulation.
+3. Ensure you have Azurite running for local storage emulation (In command, run cmd like **"azurite --location c:\azurite_data"**).
 4. In Azure Storage Explorer, create a blob container named `images` in the local storage emulator.
 5. Build and run the project.
 6. Observe the logs in the Output window of Visual Studio to see the timer trigger in action.

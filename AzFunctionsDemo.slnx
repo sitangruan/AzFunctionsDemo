@@ -2,5 +2,6 @@
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
   </Folder>
+  <Project Path="BlobTimerFunc.Tests/BlobTimerFunc.Tests.csproj" />
   <Project Path="BlobTimerFunc/BlobTimerFunc.csproj" />
 </Solution>
