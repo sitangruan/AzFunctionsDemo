@@ -27,7 +27,7 @@ public class BlobLister_UnitTests
         mockAdapter.Setup(a => a.ContainerExistsAsync("images", It.IsAny<CancellationToken>()))
                    .ReturnsAsync(true);
         mockAdapter.Setup(a => a.ListBlobNamesAsync("images", It.IsAny<CancellationToken>()))
-                   .Returns(ToAsyncEnumerable("a", "b", "c"));
+                   .Returns(() => ToAsyncEnumerable("a", "b", "c"));
 
         var settings = Options.Create(new BlobSettings { ConnectionString = "UseDevelopmentStorage=true", ContainerName = "images" });
         var logger = NullLogger<BlobLister>.Instance;
