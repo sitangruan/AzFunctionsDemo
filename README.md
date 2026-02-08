@@ -35,8 +35,11 @@ For a `BlobTimerFunc` to work, you provide a schedule in the form of a [cron exp
 ## Running the project
 1. Clone the repository to your local machine.
 2. Open the solution in Visual Studio 2026.
-3. Ensure you have Azurite running for local storage emulation (In command, run cmd like **"azurite --location c:\azurite_data"**).
+3. Ensure you have Azurite running for local storage emulation (In command, run cmd like **"azurite --location "c:\azurite_data" --skipApiVersionCheck"**).
 4. In Azure Storage Explorer, create a blob container named `images` in the local storage emulator.
 5. Build and run the project.
 6. Observe the logs in the Output window of Visual Studio to see the timer trigger in action.
+
+## Deploy the project to Azure
+In the Application Settings of the Azure Function App, set KeyVaultUri to the URI of your Key Vault, and set BlobConnectionString to the connection string of your Azure Storage account. This will allow the function to access the blob container and log the number of files it contains every 1 minute.
 
