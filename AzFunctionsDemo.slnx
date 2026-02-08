@@ -4,4 +4,5 @@
   </Folder>
   <Project Path="BlobTimerFunc.Tests/BlobTimerFunc.Tests.csproj" />
   <Project Path="BlobTimerFunc/BlobTimerFunc.csproj" />
+  <Project Path="BlobTriggerFunc/BlobTriggerFunc.csproj" Id="ae93a0e3-7c0a-4ee3-9c62-2babc9dd5fb9" />
 </Solution>

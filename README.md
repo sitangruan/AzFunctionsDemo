@@ -43,3 +43,23 @@ For a `BlobTimerFunc` to work, you provide a schedule in the form of a [cron exp
 ## Deploy the project to Azure
 In the Application Settings of the Azure Function App, set KeyVaultUri to the URI of your Key Vault, and set BlobConnectionString to the connection string of your Azure Storage account. This will allow the function to access the blob container and log the number of files it contains every 1 minute.
 
+## 2. BlobTriggerFunc - C#
+This project demonstrates the use of a Blob Trigger in an Azure Function using C#. The function is configured to trigger whenever a new blob is added to a specified container in Azure Storage. When triggered, it logs the name of the blob and its size.
+
+## How it works
+For a `BlobTriggerFunc` to work, you need to specify the path to the blob container and the blob name pattern in the function's attribute. In this sample, we use `input/{name}` which means that the function will trigger for any new blob added to the `input` container, and the `{name}` placeholder will capture the name of the blob.
+
+## Running the project
+## Running the Azurite in docker if it is not already running. If already running then ignore this step.
+•	docker run -p 10000:10000 mcr.microsoft.com/azure-storage/azurite
+
+## Running the SMTP server
+•	docker run -d --name smtp4dev -p 3025:25 -p 1080:80 rnwood/smtp4dev
+or
+•	docker run -d --name smtp4dev -p 3025:3025 -p 1080:80 -e ServerOptions__Port=3025 rnwood/smtp4dev
+(note: the default SMTP port is 25, but you can specify a different port if needed)
+
+## Running the function
+•	Press F5 to run the function in debug mode. This will create a blob container named "input" in the Azurite storage emulator.
+•	If the function sends email, open smtp4dev UI at http://localhost:1080 to see the message(s).
+
