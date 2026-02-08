@@ -8,16 +8,30 @@ using Xunit;
 using BlobTimerFunc.Services;
 
 namespace BlobTimerFunc.Tests;
+
+
+[Collection("Azure collection")]
 public class BlobLister_IntegrationTests
 {
-    // Ensure Azurite is running or point this at a real account connection string.
-    private const string LocalConn = "UseDevelopmentStorage=true";
+    private readonly AzureFixture _fixture;
 
+    public BlobLister_IntegrationTests(AzureFixture fixture)
+    {
+        _fixture = fixture;
+    }
+
+    // Ensure Azurite is running or point this at a real account connection string.
     [Fact]
     public async Task CountBlobsAsync_Returns_NumberOfBlobs_WhenContainerExists()
     {
+        if (!_fixture.IsAvailable)
+        {
+            // Azure storage not available in this environment — skip test quickly.
+            return;
+        }
+
         var containerName = "itest" + Guid.NewGuid().ToString("n").Substring(0, 8);
-        var serviceClient = new BlobServiceClient(LocalConn);
+        var serviceClient = _fixture.Client;
         var container = serviceClient.GetBlobContainerClient(containerName);
 
         try
@@ -28,7 +42,7 @@ public class BlobLister_IntegrationTests
             await container.UploadBlobAsync("b.txt", BinaryData.FromString("two"));
             await container.UploadBlobAsync("c.txt", BinaryData.FromString("three"));
 
-            var settings = Options.Create(new BlobSettings { ConnectionString = LocalConn, ContainerName = containerName });
+            var settings = Options.Create(new BlobSettings { ConnectionString = _fixture.ConnectionString, ContainerName = containerName });
             var adapter = new BlobStorageAdapter(settings, NullLogger<BlobStorageAdapter>.Instance);
             var lister = new BlobLister(settings, adapter, NullLogger<BlobLister>.Instance);
 
@@ -47,8 +61,13 @@ public class BlobLister_IntegrationTests
     [Fact]
     public async Task CountBlobsAsync_WithLimit_Returns_TruncatedToken_And_Can_Resume()
     {
+        if (!_fixture.IsAvailable)
+        {
+            return;
+        }
+
         var containerName = "itest" + Guid.NewGuid().ToString("n").Substring(0, 8);
-        var serviceClient = new BlobServiceClient(LocalConn);
+        var serviceClient = _fixture.Client;
         var container = serviceClient.GetBlobContainerClient(containerName);
 
         try
@@ -60,7 +79,7 @@ public class BlobLister_IntegrationTests
                 await container.UploadBlobAsync($"blob{i}.txt", BinaryData.FromString($"payload {i}"));
             }
 
-            var settings = Options.Create(new BlobSettings { ConnectionString = LocalConn, ContainerName = containerName });
+            var settings = Options.Create(new BlobSettings { ConnectionString = _fixture.ConnectionString, ContainerName = containerName });
             var adapter = new BlobStorageAdapter(settings, NullLogger<BlobStorageAdapter>.Instance);
             var lister = new BlobLister(settings, adapter, NullLogger<BlobLister>.Instance);
 

@@ -8,16 +8,27 @@ using Xunit;
 using BlobTimerFunc.Services;
 
 namespace BlobTimerFunc.Tests;
+
+[Collection("Azure collection")]
 public class BlobStorageAdapter_IntegrationTests
 {
-    // Requires Azurite (or a live account). Ensure Azurite is running and "UseDevelopmentStorage=true" is valid.
-    private const string LocalConn = "UseDevelopmentStorage=true";
+    private readonly AzureFixture _fixture;
+
+    public BlobStorageAdapter_IntegrationTests(AzureFixture fixture)
+    {
+        _fixture = fixture;
+    }
 
     [Fact]
     public async Task BlobStorageAdapter_List_and_Exists_Work_With_Azurite()
     {
+        if (!_fixture.IsAvailable)
+        {
+            return;
+        }
+
         var containerName = "itest" + Guid.NewGuid().ToString("n").Substring(0, 8);
-        var serviceClient = new BlobServiceClient(LocalConn);
+        var serviceClient = _fixture.Client;
         var container = serviceClient.GetBlobContainerClient(containerName);
 
         try
@@ -26,7 +37,7 @@ public class BlobStorageAdapter_IntegrationTests
             await container.UploadBlobAsync("one.txt", BinaryData.FromString("1"));
             await container.UploadBlobAsync("two.txt", BinaryData.FromString("2"));
 
-            var settings = Options.Create(new BlobSettings { ConnectionString = LocalConn, ContainerName = containerName });
+            var settings = Options.Create(new BlobSettings { ConnectionString = _fixture.ConnectionString, ContainerName = containerName });
             var logger = NullLogger<BlobStorageAdapter>.Instance;
             var adapter = new BlobStorageAdapter(settings, logger);
 
