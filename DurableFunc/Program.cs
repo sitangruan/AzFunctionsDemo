@@ -26,19 +26,6 @@ builder.Services.Configure<BlobSettings>(opts =>
         ?? opts.ContainerName;
 });
 
-//builder.Services.Configure<SmtpOptions>(opts =>
-//{
-//    opts.Host = config["SmtpHost"] ?? opts.Host;
-//    opts.Port = int.TryParse(config["SmtpPort"], out var p) ? p : opts.Port;
-//    opts.User = config["SmtpUser"] ?? opts.User;
-//    opts.Pass = config["SmtpPass"] ?? opts.Pass;
-//    opts.From = config["SmtpFrom"] ?? opts.From;
-//    opts.UseSsl = bool.TryParse(config["SmtpUseSsl"], out var s) ? s : opts.UseSsl;
-//});
-
-//// Register your email sender implementation
-//builder.Services.AddTransient<IEmailSender, MailKitEmailSender>();
-
 builder.Services.AddMailKitEmailSender(configuration: config);
 
 builder.Build().Run();

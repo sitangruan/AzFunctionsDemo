@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-namespace BlobTriggerFunc.Services;
+namespace FuncUtilities;
 
 /// <summary>
 /// MailKit-based email sender that reads SMTP settings from IConfiguration.

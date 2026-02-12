@@ -1,11 +1,11 @@
+using BlobTimerFunc.Services;
+using FuncUtilities;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Azure.Storage.Blobs;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 using Xunit;
-using BlobTimerFunc.Services;
 
 namespace BlobTimerFunc.Tests;
 
@@ -36,11 +36,11 @@ public class BlobLister_IntegrationTests
 
         try
         {
-            await container.CreateIfNotExistsAsync();
+            await container.CreateIfNotExistsAsync(cancellationToken: TestContext.Current.CancellationToken);
             // upload 3 blobs
-            await container.UploadBlobAsync("a.txt", BinaryData.FromString("one"));
-            await container.UploadBlobAsync("b.txt", BinaryData.FromString("two"));
-            await container.UploadBlobAsync("c.txt", BinaryData.FromString("three"));
+            await container.UploadBlobAsync("a.txt", BinaryData.FromString("one"), TestContext.Current.CancellationToken);
+            await container.UploadBlobAsync("b.txt", BinaryData.FromString("two"), TestContext.Current.CancellationToken);
+            await container.UploadBlobAsync("c.txt", BinaryData.FromString("three"), TestContext.Current.CancellationToken);
 
             var settings = Options.Create(new BlobSettings { ConnectionString = _fixture.ConnectionString, ContainerName = containerName });
             var adapter = new BlobStorageAdapter(settings, NullLogger<BlobStorageAdapter>.Instance);
@@ -54,7 +54,7 @@ public class BlobLister_IntegrationTests
         }
         finally
         {
-            await container.DeleteIfExistsAsync();
+            await container.DeleteIfExistsAsync(cancellationToken: TestContext.Current.CancellationToken);
         }
     }
 
@@ -72,11 +72,11 @@ public class BlobLister_IntegrationTests
 
         try
         {
-            await container.CreateIfNotExistsAsync();
+            await container.CreateIfNotExistsAsync(cancellationToken: TestContext.Current.CancellationToken);
             // upload 5 blobs
             for (int i = 0; i < 5; i++)
             {
-                await container.UploadBlobAsync($"blob{i}.txt", BinaryData.FromString($"payload {i}"));
+                await container.UploadBlobAsync($"blob{i}.txt", BinaryData.FromString($"payload {i}"), TestContext.Current.CancellationToken);
             }
 
             var settings = Options.Create(new BlobSettings { ConnectionString = _fixture.ConnectionString, ContainerName = containerName });
@@ -100,7 +100,7 @@ public class BlobLister_IntegrationTests
         }
         finally
         {
-            await container.DeleteIfExistsAsync();
+            await container.DeleteIfExistsAsync(cancellationToken: TestContext.Current.CancellationToken);
         }
     }
 }

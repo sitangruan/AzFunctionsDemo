@@ -26,7 +26,7 @@ public class IBlobLister_ConsumerTests
         // Arrange
         var mockLister = new Mock<IBlobLister>(MockBehavior.Strict);
         mockLister
-            .Setup(x => x.CountBlobsAsync(null, It.IsAny<long>(), It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.CountBlobsAsync(null, It.IsAny<long>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((42L, false, null))
             .Verifiable();
 
@@ -46,7 +46,7 @@ public class IBlobLister_ConsumerTests
         // Arrange
         var mockLister = new Mock<IBlobLister>();
         mockLister
-            .Setup(x => x.CountBlobsAsync(null, It.IsAny<long>(), It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.CountBlobsAsync(null, It.IsAny<long>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((0L, false, null));
 
         var reporter = new BlobCountReporter(mockLister.Object);
@@ -56,6 +56,6 @@ public class IBlobLister_ConsumerTests
         await reporter.GetCountAsync(cts.Token);
 
         // Assert: verify the invocation occurred
-        mockLister.Verify(x => x.CountBlobsAsync(null, It.IsAny<long>(), It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()), Times.Once);
+        mockLister.Verify(x => x.CountBlobsAsync(null, It.IsAny<long>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }

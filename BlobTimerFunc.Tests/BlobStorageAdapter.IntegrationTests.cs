@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Xunit;
 using BlobTimerFunc.Services;
+using FuncUtilities;
 
 namespace BlobTimerFunc.Tests;
 
@@ -33,9 +34,9 @@ public class BlobStorageAdapter_IntegrationTests
 
         try
         {
-            await container.CreateIfNotExistsAsync();
-            await container.UploadBlobAsync("one.txt", BinaryData.FromString("1"));
-            await container.UploadBlobAsync("two.txt", BinaryData.FromString("2"));
+            await container.CreateIfNotExistsAsync(cancellationToken: TestContext.Current.CancellationToken);
+            await container.UploadBlobAsync("one.txt", BinaryData.FromString("1"), TestContext.Current.CancellationToken);
+            await container.UploadBlobAsync("two.txt", BinaryData.FromString("2"), TestContext.Current.CancellationToken);
 
             var settings = Options.Create(new BlobSettings { ConnectionString = _fixture.ConnectionString, ContainerName = containerName });
             var logger = NullLogger<BlobStorageAdapter>.Instance;
@@ -54,7 +55,7 @@ public class BlobStorageAdapter_IntegrationTests
         }
         finally
         {
-            await container.DeleteIfExistsAsync();
+            await container.DeleteIfExistsAsync(cancellationToken: TestContext.Current.CancellationToken);
         }
     }
 }

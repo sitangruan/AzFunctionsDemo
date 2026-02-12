@@ -1,4 +1,5 @@
 using BlobTimerFunc.Services;
+using FuncUtilities;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;

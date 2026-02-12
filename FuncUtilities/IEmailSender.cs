@@ -1,4 +1,4 @@
-namespace BlobTriggerFunc.Services;
+namespace FuncUtilities;
 
 /// <summary>
 /// Abstraction for sending email messages.

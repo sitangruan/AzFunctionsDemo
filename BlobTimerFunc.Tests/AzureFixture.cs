@@ -36,7 +36,7 @@ public class AzureFixture : IAsyncLifetime
         IsAvailable = false;
     }
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         try
         {
@@ -54,9 +54,9 @@ public class AzureFixture : IAsyncLifetime
         }
     }
 
-    public Task DisposeAsync()
+    public ValueTask DisposeAsync()
     {
         // No special disposal required for BlobServiceClient.
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 }

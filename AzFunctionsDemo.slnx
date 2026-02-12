@@ -6,4 +6,6 @@
   <Project Path="BlobTimerFunc/BlobTimerFunc.csproj" />
   <Project Path="BlobTriggerFunc.Tests/BlobTriggerFunc.Tests.csproj" Id="2080e6d5-9dc1-4815-8300-fe847516bd0e" />
   <Project Path="BlobTriggerFunc/BlobTriggerFunc.csproj" Id="ae93a0e3-7c0a-4ee3-9c62-2babc9dd5fb9" />
+  <Project Path="DurableFunc/DurableFunc.csproj" Id="b1b35cd8-44fb-4406-bc49-b68b8bd2778d" />
+  <Project Path="FuncUtilities/FuncUtilities.csproj" Id="151cc057-17d8-41e3-b7ff-633d2fd54ba9" />
 </Solution>
