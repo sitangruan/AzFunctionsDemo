@@ -22,6 +22,16 @@ public class ActivityFuncs
     [Function(nameof(AnalyzeFileActivity))]
     public string AnalyzeFileActivity([ActivityTrigger] string name)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new ArgumentException("File name cannot be null or empty.", nameof(name));
+        }
+
+        if (name.Contains("file2", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException($"Simulated failure for file: {name}");
+        }
+
         _logger.LogInformation("AnalyzeFileActivity {name}...", name);
         return $"[File Report] {name} has 100 rows content.";
     }
