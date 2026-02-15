@@ -1,15 +1,13 @@
 ﻿using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.DurableTask;
-using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging;
 
 namespace DurableFunc;
 
-public static class ProcessBlobOrchestrator
+public class ProcessBlobOrchestrator
 {
     [Function(nameof(ProcessBlobOrchestrator))]
-    public static async Task<object> RunOrchestrator(
+    public async Task<object> RunOrchestrator(
         [OrchestrationTrigger] TaskOrchestrationContext context)
     {
         // 1. Get the file name from the input
@@ -28,7 +26,7 @@ public static class ProcessBlobOrchestrator
         log.LogInformation("Updating the DB...");
         var dbResult = await context.CallActivityAsync<bool>(nameof(ActivityFuncs.UpdateDatabaseActivity), fileData);
 
-        return new
+        return new ProcessingResult
         {
             FileName = fileName,
             Analysis = fileData,
@@ -36,4 +34,12 @@ public static class ProcessBlobOrchestrator
             DatabaseStatus = dbResult ? "Success" : "Failed"
         };
     }
+}
+
+public class ProcessingResult
+{
+    public string FileName { get; set; } = string.Empty;
+    public string Analysis { get; set; } = string.Empty;
+    public string EmailStatus { get; set; } = string.Empty;
+    public string DatabaseStatus { get; set; } = string.Empty;
 }
