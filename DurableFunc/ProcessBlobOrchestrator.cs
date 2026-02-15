@@ -14,6 +14,13 @@ public class ProcessBlobOrchestrator
         string fileName = context.GetInput<string>() ?? string.Empty;
         var log = context.CreateReplaySafeLogger(nameof(ProcessBlobOrchestrator));
 
+        var retryOptions = new TaskRetryOptions(new RetryPolicy(
+            maxNumberOfAttempts: 3,
+            firstRetryInterval: TimeSpan.FromSeconds(5),
+            backoffCoefficient: 2.0,
+            maxRetryInterval: TimeSpan.FromMinutes(1)
+        ));
+
         // --- Step 1: analyze the file ---
         log.LogInformation("Analyzing the file...");
         var fileData = await context.CallActivityAsync<string>(nameof(ActivityFuncs.AnalyzeFileActivity), fileName);
